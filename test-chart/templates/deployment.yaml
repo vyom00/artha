@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wizard-deploy
+  namespace: dev
+spec:
+  selector:
+    matchLabels:
+      env: development
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        env: development
+    spec:
+      volumes:
+        - name: share-vol
+          emptyDir: {}
+      containers:
+      - name: hello-wizard
+        volumeMounts:
+          - name: share-vol
+            mountPath: /app/vol-1
+        image: vyom00/drop:v.0.3
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /hello-world
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 15
+        livenessProbe:
+          httpGet:
+            path: /hello-world
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 15
