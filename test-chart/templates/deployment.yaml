@@ -14,12 +14,14 @@ spec:
         env: development
     spec:
       volumes:
-        - name: share-vol
-          emptyDir: {}
+        - name: sharevol
+          nfs:
+            server: 40.114.109.239
+            path: /mnt/sharevol
       containers:
       - name: hello-wizard
         volumeMounts:
-          - name: share-vol
+          - name: sharevol
             mountPath: /app/vol-1
         image: vyom00/drop:v.0.3
         ports:
