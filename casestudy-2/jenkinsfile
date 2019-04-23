@@ -1,0 +1,26 @@
+node('master') {
+    def commit_id
+    // some block
+stage('prepration') {
+    // some block
+checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/vyom00/nitro2.git']]])
+}
+stage('test') {
+nodejs('node') {
+   sh 'npm install --only=dev'
+   sh 'npm test'
+}
+    
+}
+stage('docker login') {
+    // This step should not normally be used in your script. Consult the inline help for details.
+     sh 'docker login -u admin -p admin123 104.211.221.118:8083'
+   }
+     stage('Building image') {
+        script {
+            resigtry = "104.211.221.118:8083/app:${BUILD_NUMBER}"
+        def app  =  docker.build(resigtry)
+            app.push()
+            }
+      }
+ }   
